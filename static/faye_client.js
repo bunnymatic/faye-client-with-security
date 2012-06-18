@@ -6,10 +6,20 @@ $(function() {
   /** if you do not specify the port here, this will try to use the
       client port and communication with the server may fail */
   /** var server_uri = 'http://maucomm.herokuapp.com:80/maucomm';*/
-  var server_uri = FAYE_SERVER_URL;
   var subscription;
 
   var client = new Faye.Client(server_uri);
+  var serverAuth = {
+    outgoing: function(msg, cb) {
+      if (msg.channel === '/meta/subscribe') {
+        var subscriberToken = msg.ext && msg.ext.subscriberToken;
+        if (subscriberToken !== (process.env.CLIENT_SUBSCRIBER_AUTH_TOKEN || ' traemosekamog')) {
+          msg.error = 'Invalid subscription auth token ' + authToken;
+        }
+      }
+      cb(msg);
+    }
+  };
   /* heroku doesn't like websocket */
   client.disable('websocket');
 
