@@ -5,28 +5,25 @@ $(function() {
   
   /** if you do not specify the port here, this will try to use the
       client port and communication with the server may fail */
-  /** var server_uri = 'http://maucomm.herokuapp.com:80/maucomm';*/
   var subscription;
 
   var client = new Faye.Client(server_uri);
-  var serverAuth = {
+  var clientAuth = {
     outgoing: function(msg, cb) {
       if (msg.channel === '/meta/subscribe') {
-        var subscriberToken = msg.ext && msg.ext.subscriberToken;
-        if (subscriberToken !== (process.env.CLIENT_SUBSCRIBER_AUTH_TOKEN || ' traemosekamog')) {
-          msg.error = 'Invalid subscription auth token ' + authToken;
-        }
+        msg.ext = msg.ext || {};
+        msg.ext.subscriberToken = SUBSCRIBER_AUTH_TOKEN;
       }
       cb(msg);
     }
   };
   /* heroku doesn't like websocket */
   client.disable('websocket');
-
+  client.addExtension(clientAuth);
   $('#publish').bind('submit', function() {
     var msg = $(this).find('input#message').val();
     if (msg) {
-      client.publish('/' + thisclient, {text:msg});
+      client.publish('/' + thisclient, {text:"["+thisclient+"] " + msg});
     }
     return false;
   });
@@ -51,9 +48,9 @@ $(function() {
         thisclient = this.value;
       } else {
         thatclient = this.value;
-      }
+      } 
       console.log('this/that : ', thisclient, thatclient);
-    });
+   });
     subscribe(thatclient);
   });            
 
