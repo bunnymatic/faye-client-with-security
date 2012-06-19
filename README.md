@@ -14,9 +14,18 @@ Requirements
 
 Since we're looking at Heroku for deployment and we need ruby 1.9.3 for threading, we need to use Bundler >= 1.2.0pre .  To install bundler 1.2.0pre, follow these instructions (ripped from [here](http://railsapps.github.com/installing-rails.html]
 
-    $ rvm gemset use global
-    $ gem uninstall -ax bundler
-    $ gem install bundler --pre
-    $ bundle --version
+    % rvm gemset use global
+    % gem uninstall -ax bundler
+    % gem install bundler --pre
+    % bundle --version
+
+Local Deploy
+----
+Assuming you've got the new bundler:
+    
+    % git clone https://github.com/bunnymatic/faye-client-with-security
+    % cd faye-client-with-security
+    % bundle install
+    % bundle exec rackup
 
 
